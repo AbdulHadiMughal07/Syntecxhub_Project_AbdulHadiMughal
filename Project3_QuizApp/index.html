@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz App</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#1e293b);
+min-height:100vh;
+display:flex;
+align-items:flex-start;
+justify-content:center;
+color:white;
+padding:40px 0;
+overflow-y:auto;
+}
+
+.quiz-container{
+width:90%;
+max-width:650px;
+background:#020617;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+color:#38bdf8;
+}
+
+.progress{
+width:100%;
+height:8px;
+background:#1e293b;
+border-radius:10px;
+margin-bottom:20px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#38bdf8;
+transition:0.3s;
+}
+
+.question{
+font-size:20px;
+margin-bottom:20px;
+}
+
+.options{
+display:grid;
+gap:10px;
+}
+
+.option{
+padding:12px;
+background:#1e293b;
+border-radius:8px;
+cursor:pointer;
+transition:0.2s;
+border:1px solid transparent;
+}
+
+.option:hover{
+background:#334155;
+}
+
+.option.selected{
+border-color:#38bdf8;
+background:#334155;
+}
+
+.buttons{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#38bdf8;
+font-weight:600;
+}
+
+button:hover{
+background:#0ea5e9;
+}
+
+.result{
+margin-top:20px;
+}
+
+.summary{
+margin-top:25px;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.summary-title{
+font-size:20px;
+color:#38bdf8;
+}
+
+.summary-card{
+background:#1e293b;
+padding:15px;
+border-radius:8px;
+border-left:6px solid;
+}
+
+.summary-card.correct{
+border-color:#22c55e;
+}
+
+.summary-card.wrong{
+border-color:#ef4444;
+}
+
+.correct-text{
+color:#22c55e;
+font-weight:600;
+}
+
+.wrong-text{
+color:#ef4444;
+font-weight:600;
+}
+
+.restart{
+margin-top:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+
+<h1>Quiz App</h1>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div id="quiz">
+
+<div id="question"></div>
+<div class="options" id="options"></div>
+
+<div class="buttons">
+<button id="nextBtn">Next</button>
+<button id="submitBtn" style="display:none;">Submit</button>
+</div>
+
+</div>
+
+<div id="result" class="result" style="display:none;">
+<h2>Your Score</h2>
+<p id="score"></p>
+
+<div id="summary" class="summary"></div>
+
+<button class="restart" onclick="restartQuiz()">Restart Quiz</button>
+</div>
+
+</div>
+
+<script>
+
+const questions=[
+
+{
+question:"What does HTML stand for?",
+options:["Hyper Text Markup Language","High Text Machine Language","Hyper Tool Multi Language","None"],
+answer:0
+},
+
+{
+question:"Which language is used for styling websites?",
+options:["HTML","Python","CSS","Java"],
+answer:2
+},
+
+{
+question:"Which language is used for web interactivity?",
+options:["JavaScript","C++","Python","PHP"],
+answer:0
+},
+
+{
+question:"Which tag is used for images in HTML?",
+options:["<img>","<image>","<src>","<pic>"],
+answer:0
+},
+
+{
+question:"Which property helps create responsive layouts?",
+options:["Flexbox / Grid","Font-size","Color","Border"],
+answer:0
+}
+
+];
+
+let currentQuestion=0;
+let score=0;
+let userAnswers=new Array(questions.length).fill(null);
+
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const nextBtn=document.getElementById("nextBtn");
+const submitBtn=document.getElementById("submitBtn");
+const progressBar=document.getElementById("progressBar");
+
+function loadQuestion(){
+
+let q=questions[currentQuestion];
+
+questionEl.innerHTML=`<b>Q${currentQuestion+1}:</b> ${q.question}`;
+
+optionsEl.innerHTML="";
+
+q.options.forEach((option,index)=>{
+
+let div=document.createElement("div");
+div.classList.add("option");
+div.innerText=option;
+
+if(userAnswers[currentQuestion]===index){
+div.classList.add("selected");
+}
+
+div.onclick=()=>{
+
+document.querySelectorAll(".option")
+.forEach(o=>o.classList.remove("selected"));
+
+div.classList.add("selected");
+
+userAnswers[currentQuestion]=index;
+
+};
+
+optionsEl.appendChild(div);
+
+});
+
+updateProgress();
+
+}
+
+function updateProgress(){
+
+let percent=(currentQuestion/questions.length)*100;
+progressBar.style.width=percent+"%";
+
+}
+
+nextBtn.onclick=()=>{
+
+if(userAnswers[currentQuestion]===null){
+alert("Please select an answer first");
+return;
+}
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+
+loadQuestion();
+
+if(currentQuestion===questions.length-1){
+nextBtn.style.display="none";
+submitBtn.style.display="block";
+}
+
+}
+
+};
+
+submitBtn.onclick=()=>{
+
+let unanswered=userAnswers.indexOf(null);
+
+if(unanswered!==-1){
+
+currentQuestion=unanswered;
+loadQuestion();
+nextBtn.style.display="block";
+submitBtn.style.display="none";
+alert("Please answer all questions first");
+return;
+
+}
+
+calculateScore();
+showResult();
+
+};
+
+function calculateScore(){
+
+score=0;
+
+questions.forEach((q,i)=>{
+
+if(userAnswers[i]===q.answer){
+score++;
+}
+
+});
+
+}
+
+function showResult(){
+
+document.getElementById("quiz").style.display="none";
+document.getElementById("result").style.display="block";
+
+document.getElementById("score").innerText=
+score+" / "+questions.length+
+" ("+((score/questions.length)*100).toFixed(0)+"%)";
+
+showSummary();
+
+}
+
+function showSummary(){
+
+const summary=document.getElementById("summary");
+
+summary.innerHTML="<div class='summary-title'>Answer Review</div>";
+
+questions.forEach((q,i)=>{
+
+let user=userAnswers[i];
+let correct=q.answer;
+
+let card=document.createElement("div");
+card.classList.add("summary-card");
+
+if(user===correct){
+card.classList.add("correct");
+}else{
+card.classList.add("wrong");
+}
+
+card.innerHTML=`
+<div><b>Q${i+1}:</b> ${q.question}</div>
+<div>Your Answer: ${q.options[user]}</div>
+<div>Correct Answer: ${q.options[correct]}</div>
+<div class="${user===correct ? "correct-text":"wrong-text"}">
+${user===correct ? "✔ Correct":"✖ Wrong"}
+</div>
+`;
+
+summary.appendChild(card);
+
+});
+
+}
+
+function restartQuiz(){
+
+currentQuestion=0;
+score=0;
+userAnswers=new Array(questions.length).fill(null);
+
+document.getElementById("result").style.display="none";
+document.getElementById("quiz").style.display="block";
+
+nextBtn.style.display="block";
+submitBtn.style.display="none";
+
+progressBar.style.width="0%";
+
+loadQuestion();
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
