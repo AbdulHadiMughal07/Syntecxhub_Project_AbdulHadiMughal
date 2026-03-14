@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dark Light Mode Toggle</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+transition:all 0.3s ease;
+}
+
+body{
+background:#f1f5f9;
+color:#0f172a;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.container{
+width:90%;
+max-width:900px;
+padding:40px;
+text-align:center;
+}
+
+h1{
+margin-bottom:10px;
+font-size:32px;
+}
+
+p{
+margin-bottom:30px;
+color:#475569;
+}
+
+.toggle-wrapper{
+display:flex;
+justify-content:center;
+align-items:center;
+margin-bottom:40px;
+gap:10px;
+font-size:20px;
+}
+
+.toggle{
+width:60px;
+height:30px;
+background:#cbd5f5;
+border-radius:50px;
+position:relative;
+cursor:pointer;
+}
+
+.toggle-circle{
+width:26px;
+height:26px;
+background:white;
+border-radius:50%;
+position:absolute;
+top:2px;
+left:2px;
+box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+
+.card h3{
+margin-bottom:10px;
+}
+
+.card p{
+font-size:14px;
+color:#64748b;
+}
+
+/* DARK MODE */
+
+body.dark{
+background:#020617;
+color:#e2e8f0;
+}
+
+body.dark p{
+color:#94a3b8;
+}
+
+body.dark .card{
+background:#0f172a;
+box-shadow:0 6px 20px rgba(0,0,0,0.5);
+}
+
+body.dark .toggle{
+background:#334155;
+}
+
+body.dark .toggle-circle{
+left:32px;
+background:#38bdf8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Dark / Light Mode</h1>
+
+<p>Toggle between dark and light themes with smooth transitions.</p>
+
+<div class="toggle-wrapper">
+
+<span><i class="fa-solid fa-sun"></i></span>
+
+<div class="toggle" id="toggle">
+<div class="toggle-circle"></div>
+</div>
+
+<span><i class="fa-solid fa-moon"></i></span>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+<h3>Responsive Layout</h3>
+<p>This layout adjusts beautifully on mobile, tablet and desktop screens.</p>
+</div>
+
+<div class="card">
+<h3>Smooth Animation</h3>
+<p>Theme switching includes smooth transitions for better user experience.</p>
+</div>
+
+<div class="card">
+<h3>Saved Preference</h3>
+<p>The selected theme is saved using localStorage.</p>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const toggle=document.getElementById("toggle");
+const body=document.body;
+
+if(localStorage.getItem("theme")==="dark"){
+body.classList.add("dark");
+}
+
+toggle.addEventListener("click",()=>{
+
+body.classList.toggle("dark");
+
+if(body.classList.contains("dark")){
+localStorage.setItem("theme","dark");
+}else{
+localStorage.setItem("theme","light");
+}
+
+});
+
+</script>
+
+</body>
+</html>
